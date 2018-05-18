@@ -1,0 +1,88 @@
+﻿@model Techbart.DB.Product
+
+@{
+    ViewBag.Title = "Delete";
+    var images = default(List<Techbart.DB.Image>);
+    if (ViewBag.Images != null)
+    {
+        images = (List<Techbart.DB.Image>)ViewBag.Images;
+    }
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+	<h4>Product</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ImageId)
+        </dt>
+
+        <dd>
+            @Html.ImageHelper(Model.ImageId, Url, "upload-image-img")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductDescription)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedDate)
+        </dd>
+
+		<dt class="product-photo">
+			Product Photos:
+		</dt>
+
+        <dd>
+        </dd>
+
+        @foreach (var image in images)
+        {
+            <dt>
+                Image #@image.ImageId
+            </dt>
+
+            <dd>
+                @Html.ImageHelper(image, Url, "product-photo details")
+            </dd>
+        }
+    </dl>
+
+    @using (Html.BeginForm("DeleteProduct", "Product", new { id = Model.ProductId }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

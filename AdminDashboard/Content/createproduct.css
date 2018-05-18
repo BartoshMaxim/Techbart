@@ -1,0 +1,104 @@
+﻿.overflow-hidden {
+    overflow: hidden;
+}
+
+.product-button {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: white;
+    background-color: #33cc33;
+    float: left;
+    font-size: 25px;
+    margin-right: 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    position: relative;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none;
+}
+
+    .product-button.add-supplement {
+        border-radius: 30px;
+    }
+
+    .product-button:hover {
+        background-color: #00b300;
+    }
+
+    .product-button.active {
+        background-color: #009900;
+    }
+
+        .product-button.active:hover {
+            background-color: #008000;
+        }
+
+    .product-button.add-image {
+        width: 120px;
+        height: 100px;
+        margin-bottom: 10px;
+        line-height: 100px;
+        position: relative;
+        margin-left: 0;
+    }
+
+        .product-button.add-image label {
+            font-weight: normal;
+            width: 120px;
+            height: 100px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+            .product-button.add-image label img {
+                margin-top: -4px;
+                width: 108px;
+                height: 90px;
+            }
+
+        .product-button.add-image .icon.remove {
+            width: 23px;
+            height: 23px;
+            background: url("../Images/AdminDashboard/remove-icon.png");
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            display: none;
+        }
+
+        .product-button.add-image:hover .icon.remove {
+            display: block;
+        }
+
+img.exists-image-img {
+    max-height: 250px;
+    max-width: 250px;
+    margin: 10px;
+}
+
+div#update {
+    float: right;
+}
+
+    div#update th, tr {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    div#update td {
+        min-width: 100px;
+    }
+
+.green-back {
+    background-color: #66ff66;
+}
+
+@media (max-width: 992px) {
+    div#update {
+        float: left;
+    }
+}

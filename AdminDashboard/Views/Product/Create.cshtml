@@ -1,0 +1,107 @@
+﻿@model Techbart.DB.CreateProductModel
+
+@{
+	ViewBag.Title = "Create";
+}
+
+@section styles{
+	<link href="~/Content/createproduct.css" rel="stylesheet" type="text/css" />
+}
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "Product", FormMethod.Post, new { @class = "overflow-hidden", enctype = "multipart/form-data" }))
+{
+	@Html.AntiForgeryToken()
+	<h4>Product</h4>
+	<hr />
+	<div class="col-md-4" id="update"></div>
+	<div class="form-horizontal col-md-8">
+		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+		<div class="form-group col-md-12">
+			@Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group col-md-12">
+			@Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control", type = "number", step = "any" } })
+				@Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		@*<div class="form-group col-md-12">
+			@Html.LabelFor(model => model.ImageId, htmlAttributes: new { @class = "control-label col-md-4" })
+			<div class="col-md-8">
+				<div class="product-button" href="#update" id="exists-image">Choose exists</div>
+				<div class="product-button" id="new-image">Add new image</div>
+			</div>
+			@Html.ValidationMessage("Image")
+		</div>*@
+
+		<div class="form-group col-md-12">
+			@Html.LabelFor(model => model.ProductDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.ProductDescription, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.ProductDescription, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group col-md-12">
+			@Html.Label("Product Photos", htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				<div class="product-button add-image image1">
+					<label for="image1">+</label>
+					<input class="upload-image file" type="file" title="search image" onchange="readURL(this)" id="image1" name="Files[0]" accept="image/*" />
+				</div>
+				<div class="product-button add-image image2">
+					<label for="image2">+</label>
+					<input class="upload-image file" type="file" title="search image" onchange="readURL(this)" id="image2" name="Files[1]" accept="image/*" />
+				</div>
+				<div class="product-button add-image image3">
+					<label for="image3">+</label>
+					<input class="upload-image file" type="file" title="search image" onchange="readURL(this)" id="image3" name="Files[2]" accept="image/*" />
+				</div>
+				<div class="product-button add-image image4">
+					<label for="image4">+</label>
+					<input class="upload-image file" type="file" title="search image" onchange="readURL(this)" id="image4" name="Files[3]" accept="image/*" />
+				</div>
+				<div class="product-button add-image image5">
+					<label for="image5">+</label>
+					<input class="upload-image file" type="file" title="search image" onchange="readURL(this)" id="image5" name="Files[4]" accept="image/*" />
+				</div>
+				<div class="product-button add-image image6">
+					<label for="image6">+</label>
+					<input class="upload-image file" type="file" title="search image" onchange="readURL(this)" id="image6" name="Files[5]" accept="image/*" />
+				</div>
+				<div class="product-button add-image image7">
+					<label for="image7">+</label>
+					<input class="upload-image file" type="file" title="search image" onchange="readURL(this)" id="image7" name="Files[6]" accept="image/*" />
+				</div>
+				<div class="product-button add-image image8">
+					<label for="image8">+</label>
+					<input class="upload-image file" type="file" title="search image" onchange="readURL(this)" id="image8" name="Files[7]" accept="image/*" />
+				</div>
+				@Html.ValidationMessageFor(model => model.ProductDescription, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group col-md-12">
+			<div class="col-md-offset-2 col-md-10">
+				<input type="submit" value="Create" class="btn btn-default" />
+			</div>
+		</div>
+	</div>
+}
+
+<div>
+	@Html.ActionLink("Back to List", "Index")
+</div>
+
+@section scripts{
+	<script src="~/Scripts/createproduct.js"></script>
+	<script src="~/Scripts/uploadimage.js"></script>
+}

@@ -1,0 +1,58 @@
+﻿@model Techbart.DB.Supplement
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Supplement</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SupplementId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SupplementId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SupplementName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SupplementName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SupplementWeight)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SupplementWeight)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SupplementDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SupplementDescription)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SupplementPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SupplementPrice)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SupplementId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

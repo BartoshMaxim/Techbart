@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Techbart.DB.Supplement>
+
+@{
+    ViewBag.Title = "Index";
+    var rowsCount = 10;
+
+    var options = new AjaxOptions()
+    {
+        UpdateTargetId = "pagesdata",
+        Url = Url.Action("PagesData")
+    };
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<table class="table">
+    <thead>
+        <tr id="search">
+            <th class="findid-box">
+                @Html.DisplayNameFor(model => model.SupplementId)
+                <input class="form-control text-box single-line search findid-box" data-val="true" name="SupplementId" type="number">
+            </th>
+            <th class="findid-box">
+                @Html.DisplayNameFor(model => model.SupplementName)
+                <input class="form-control text-box single-line search " data-val="true" name="SupplementName" type="text">
+            </th>
+            <th class="findid-box">
+                @Html.DisplayNameFor(model => model.SupplementWeight)
+                <input class="form-control text-box single-line search" data-val="true" name="SupplementWeight" type="number" step="0.1">
+            </th>
+            <th class="findid-box">
+                @Html.DisplayNameFor(model => model.SupplementPrice)
+                <input class="form-control text-box single-line search findid-box" data-val="true" name="SupplementPrice" type="number">
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="pagesdata">
+        @Html.Action("PagesData", new { rows = rowsCount, page = 1 })
+    </tbody>
+</table>
+@section scripts{
+    <script src="~/Scripts/page.js"></script>
+}

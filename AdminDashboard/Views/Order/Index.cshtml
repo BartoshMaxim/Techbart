@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Techbart.DB.Order>
+
+@{
+    ViewBag.Title = "Index";
+    var rowsCount = 10;
+
+    var options = new AjaxOptions()
+    {
+        UpdateTargetId = "pagesdata",
+        Url = Url.Action("PagesData")
+    };
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderId)
+                <input class="form-control text-box single-line findid-box search" data-val="true" name="OrderId" type="number">
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+                <input class="form-control text-box single-line findid-box search" data-val="true" name="ProductId" type="number">
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerId)
+                <input class="form-control text-box single-line findid-box search" data-val="true" name="CustomerId" type="number">
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+                <input class="form-control text-box single-line search" data-val="true" name="OrderDate" type="date">
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderType)
+
+                <select class="form-control text-box single-line search">
+                    @foreach (var orderval in Enum.GetValues(typeof(Techbart.DB.OrderType)))
+                    {
+                        if (orderval.Equals(Techbart.DB.OrderType.All))
+                        {
+                            <option selected value="@orderval">
+                                @Enum.GetName(typeof(Techbart.DB.OrderType), orderval)
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@orderval">
+                                @Enum.GetName(typeof(Techbart.DB.OrderType), orderval)
+                            </option>
+                        }
+
+                    }
+                </select>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="pagesdata">
+        @Html.Action("PagesData", new { rows = rowsCount, page = 1, OrderType = -1 })
+    </tbody>
+</table>
+@section scripts{
+    <script src="~/Scripts/page.js"></script>
+}

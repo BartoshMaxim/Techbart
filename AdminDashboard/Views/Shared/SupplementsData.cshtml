@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Techbart.DB.Supplement>
+
+@{
+    var searchSupplement = (Techbart.DB.SearchSupplementModel)ViewBag.SearchSupplementModel;
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupplementId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupplementName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupplementWeight)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupplementPrice)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.SupplementId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.SupplementId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.SupplementId })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="5">
+            <ul class="pages">
+                @for (int i = 1; i <= ViewBag.PagesCount; i++)
+                {
+
+                    <li>
+                        @if (searchSupplement.Page == i)
+                        {
+                            @Ajax.ActionLink(i.ToString(), "PagesData", new
+                       {
+                           page = i,
+                           rows = searchSupplement.Rows,
+                           SupplementId = searchSupplement.SupplementId,
+                           SupplementName = searchSupplement.SupplementName,
+                           SupplementWeight = searchSupplement.SupplementWeight,
+                           SupplementDescription = searchSupplement.SupplementDescription,
+                           SupplementPrice = searchSupplement.SupplementPrice
+                       }, new AjaxOptions
+                       {
+                           UpdateTargetId = "pagesdata"
+                       }, new { @class = "active" })
+                        }
+                        else
+                        {
+                            @Ajax.ActionLink(i.ToString(), "PagesData", new
+                       {
+                           page = i,
+                           rows = searchSupplement.Rows,
+                           SupplementId = searchSupplement.SupplementId,
+                           SupplementName = searchSupplement.SupplementName,
+                           SupplementWeight = searchSupplement.SupplementWeight,
+                           SupplementDescription = searchSupplement.SupplementDescription,
+                           SupplementPrice = searchSupplement.SupplementPrice
+                       }, new AjaxOptions
+                       {
+                           UpdateTargetId = "pagesdata"
+                       })
+                        }
+
+                    </li>
+                }
+            </ul>
+        </td>
+    </tr>
+}
+else
+{
+    <tr>
+        <td colspan="5">
+            Could not found any data
+        </td>
+    </tr>
+}

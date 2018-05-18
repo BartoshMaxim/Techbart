@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Techbart.DB.Order>
+
+@{
+    var searchOrder = (Techbart.DB.SearchOrderModel)ViewBag.SearchOrderModel;
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderType)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.OrderId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.OrderId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.OrderId })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="5">
+            <ul class="pages">
+                @for (int i = 1; i <= ViewBag.PagesCount; i++)
+                {
+
+                    <li>
+                        @if (searchOrder.Page == i)
+                        {
+                            @Ajax.ActionLink(i.ToString(), "PagesData", new
+					   {
+						   page = i,
+						   rows = searchOrder.Rows,
+						   OrderId = searchOrder.OrderId,
+						   ProductId = searchOrder.ProductId,
+						   CustomerId = searchOrder.CustomerId,
+						   OrderDate = searchOrder.OrderDate,
+						   OrderType = searchOrder.OrderType
+					   }, new AjaxOptions
+					   {
+						   UpdateTargetId = "pagesdata"
+					   }, new { @class = "active" })
+                        }
+                        else
+                        {
+                            @Ajax.ActionLink(i.ToString(), "PagesData", new
+					   {
+						   page = i,
+						   rows = searchOrder.Rows,
+						   OrderId = searchOrder.OrderId,
+						   ProductId = searchOrder.ProductId,
+						   CustomerId = searchOrder.CustomerId,
+						   OrderDate = searchOrder.OrderDate,
+						   OrderType = searchOrder.OrderType
+					   }, new AjaxOptions
+					   {
+						   UpdateTargetId = "pagesdata"
+					   })
+                        }
+
+                    </li>
+                }
+            </ul>
+        </td>
+    </tr>
+}
+else
+{
+    <tr>
+        <td colspan="5">
+            Could not found any data
+        </td>
+    </tr>
+}

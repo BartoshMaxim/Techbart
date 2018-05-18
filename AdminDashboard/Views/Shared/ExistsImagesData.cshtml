@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Techbart.DB.Image>
+
+@{
+    var searchImage = (Techbart.DB.SearchImageModel)ViewBag.SearchImageModel;
+}
+
+<table>
+    @if (Model != null)
+    {
+
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageId)
+            </th>
+            <th>
+                Image
+            </th>
+        </tr>
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImageId)
+                </td>
+                <td>
+                    <label for="@item.ImageId@item.ImageName">
+                        @Html.ImageHelper(item, Url, "exists-image-img")
+                    </label>
+                </td>
+                <td>
+                    <input type="radio" id="@item.ImageId@item.ImageName" onchange="changeParentColor(this)" name="ImageId" value="@item.ImageId">
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="5">
+                <ul class="pages">
+                    @for (int i = 1; i <= ViewBag.PagesCount; i++)
+                {
+
+                        <li>
+                            @if (searchImage.Page == i)
+                            {
+                                @Ajax.ActionLink(i.ToString(), "PagesData", new
+                           {
+                               page = i,
+                               rows = searchImage.Rows,
+                               CustomerId = searchImage.ImageId,
+                               FirstName = searchImage.ImageName,
+                               LastName = searchImage.ImagePath,
+                           }, new AjaxOptions
+                           {
+                               UpdateTargetId = "update"
+                           }, new { @class = "active" })
+                            }
+                            else
+                            {
+                                @Ajax.ActionLink(i.ToString(), "PagesData", new
+                           {
+                               page = i,
+                               rows = searchImage.Rows,
+                               CustomerId = searchImage.ImageId,
+                               FirstName = searchImage.ImageName,
+                               LastName = searchImage.ImagePath
+                           }, new AjaxOptions
+                           {
+                               UpdateTargetId = "update"
+                           })
+                            }
+
+                        </li>
+                    }
+                </ul>
+            </td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td colspan="5">
+                Could not found any data
+            </td>
+        </tr>
+    }
+</table>
