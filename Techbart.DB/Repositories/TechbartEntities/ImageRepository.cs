@@ -8,7 +8,7 @@ using Techbart.DB.Interfaces;
 
 namespace Techbart.DB.Repositories
 {
-	public class ImageRepository : IImageRepository, IDisposable
+	public class ImageRepository : IImageRepository
 	{
 		private readonly IDbConnection _context;
 
@@ -116,13 +116,13 @@ namespace Techbart.DB.Repositories
 				).ToList();
 		}
 
-		public int GetCountRows() =>
+		public int Count() =>
 			_context.ExecuteScalar<int>(@"
                     SELECT COUNT(ImageId)       
                     FROM 
                         Images");
 
-		public int GetCountRows(IImage image)
+		public int Count(IImage image)
 		{
 			var query = string.Empty;
 			if (image != null)
@@ -184,7 +184,7 @@ namespace Techbart.DB.Repositories
 
 		public int GetIdForNextImage()
 		{
-			var imageID = GetCountRows();
+			var imageID = Count();
 
 			while (IsExists(imageID))
 			{

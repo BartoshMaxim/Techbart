@@ -1,7 +1,6 @@
-﻿using AdminDashboard.Core.Helpers;
+﻿using System.Web.Mvc;
 using Techbart.DB;
 using Techbart.DB.Interfaces;
-using System.Web.Mvc;
 
 namespace AdminDashboard.Controllers
 {
@@ -14,44 +13,25 @@ namespace AdminDashboard.Controllers
             _orderRepository = orderRepository;
         }
 
-        // GET: Order
-        public ActionResult Index()
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_orderRepository.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+		// GET: Order
+		public ActionResult Index()
         {
-            return View();
+            return View(new SearchOrderModel());
         }
 
         public ActionResult PagesData(SearchOrderModel searchOrder)
         {
-            var customersCount = 0;
-            if (searchOrder.Validate())
-            {
-                customersCount = _orderRepository.GetCountRows(searchOrder);
-            }
-            else
-            {
-                customersCount = _orderRepository.GetCountRows();
-            }
-
-            if (customersCount == 0)
-            {
-                return PartialView("_OrdersData", null);
-            }
-
-            var valideteRowsPage = new ValidateRowsPage(searchOrder, customersCount);
-
-            ViewBag.PagesCount = valideteRowsPage.ValidateGetPageCount();
-
-            var from = (searchOrder.Page - 1) * searchOrder.Rows;
-
-            var to = searchOrder.Page * searchOrder.Rows;
-
-            ViewBag.SearchOrderModel = searchOrder;
-
-            //Get limit orders from database
-            var customers = _orderRepository.GetOrders(from, to, searchOrder);
-
-            return PartialView("_OrdersData", customers);
-        }
+			return PartialView("_OrdersData", _orderRepository.GetOrders(searchOrder));
+		}
 
         // GET: Order/Details/5
         public ActionResult Details(int id)

@@ -67,7 +67,7 @@
 
 		$.ajax({
 			data: data,
-			url: "/" + controllerName + "/Pager",
+			url: "/" + controllerName + "/ShowPager",
 			success: function success(result) {
 				$("#pager").html(result);
 				bindPager();

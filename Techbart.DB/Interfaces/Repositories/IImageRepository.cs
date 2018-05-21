@@ -1,27 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Techbart.DB.Interfaces
 {
-	public interface IImageRepository
-    {
-        IList<Image> GetImages();
+	public interface IImageRepository : IDisposable
+	{
+		IList<Image> GetImages();
 
-        IList<Image> GetImages(SearchImageModel searchImageModel);
+		IList<Image> GetImages(SearchImageModel searchImageModel);
 
-        IImage GetImage(int imageid);
+		IImage GetImage(int imageid);
 
-        bool InsertImage(IImage image);
+		bool InsertImage(IImage image);
 
-        bool DeleteImage(int imageid);
+		bool DeleteImage(int imageid);
 
-        bool UpdateImage(IImage updateImage);
+		bool UpdateImage(IImage updateImage);
 
-        bool IsExists(int imageid);
+		bool IsExists(int imageid);
 
-        int GetCountRows();
+		int Count();
 
-        int GetCountRows(IImage image);
+		int Count(IImage image);
 
-        int GetIdForNextImage();
-    }
+		int GetIdForNextImage();
+	}
 }

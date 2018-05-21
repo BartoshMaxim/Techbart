@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Techbart.DB.Interfaces
 {
-    public interface ISupplementRepository
+	public interface ISupplementRepository : IDisposable
     {
         IList<Supplement> GetSupplements();
 
-        IList<Supplement> GetSupplements(int from, int to, ISupplement searchSupplement);
+        IList<Supplement> GetSupplements(SearchSupplementModel searchSupplement);
 
         ISupplement GetSupplement(int supplementid);
 
@@ -22,8 +19,8 @@ namespace Techbart.DB.Interfaces
 
         bool IsExists(int supplementid);
 
-        int GetCountRows();
+        int Count();
 
-        int GetCountRows(ISupplement searchSupplement);
+        int Count(ISupplement searchSupplement);
     }
 }

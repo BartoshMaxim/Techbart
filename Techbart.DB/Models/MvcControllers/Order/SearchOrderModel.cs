@@ -1,9 +1,10 @@
 ﻿using Techbart.DB.Interfaces;
 using System;
+using Bakery.DB.Models.MvcControllers;
 
 namespace Techbart.DB
 {
-	public class SearchOrderModel : IOrder, IPage
+	public class SearchOrderModel : SearchModel,IOrder
 	{
 		public int OrderId { get; set; }
 
@@ -19,19 +20,7 @@ namespace Techbart.DB
 
 		public DateTime CreatedDate { get; set; }
 
-		public int Rows { get; set; }
-
-		public int Page { get; set; }
-
-		public string OrderBy { get; set; }
-
-		public int Skip { get; set; }
-
-		public int Take { get; set; }
-
-		public int Count { get; set; }
-
-		public bool IsDesc { get; set; }
+		public SearchOrderModel() : base("OrderId") { }
 
 		public bool Validate()
 		{

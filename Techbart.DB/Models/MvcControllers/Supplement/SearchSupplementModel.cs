@@ -1,8 +1,9 @@
-﻿using Techbart.DB.Interfaces;
+﻿using Bakery.DB.Models.MvcControllers;
+using Techbart.DB.Interfaces;
 
 namespace Techbart.DB
 {
-	public class SearchSupplementModel : ISupplement, IPage
+	public class SearchSupplementModel : SearchModel, ISupplement
     {
         public int SupplementId { get; set; }
 
@@ -14,19 +15,7 @@ namespace Techbart.DB
 
         public float SupplementWeight { get; set; }
 
-        public int Rows { get; set; }
-
-        public int Page { get; set; }
-
-		public string OrderBy { get; set; }
-
-		public int Skip { get; set; }
-
-		public int Take { get; set; }
-
-		public int Count { get; set; }
-
-		public bool IsDesc { get; set; }
+		public SearchSupplementModel() : base("SupplementId") { }
 
 		public bool Validate()
 		{

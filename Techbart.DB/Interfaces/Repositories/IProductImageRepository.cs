@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Techbart.DB.Interfaces
 {
-	public interface IProductImageRepository
+	public interface IProductImageRepository: IDisposable
     {
         IList<Image> GetImages(int productid);
 

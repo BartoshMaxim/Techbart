@@ -4,31 +4,31 @@ using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using System.Text;
+using System.Data;
 
 namespace Techbart.DB.Repositories
 {
 	public class OrderRepository : IOrderRepository
 	{
-		public bool DeleteOrder(int orderid)
+		private readonly IDbConnection _context;
+
+		public OrderRepository()
 		{
-			using (var context = Bakery.Sql())
-			{
-				return context.Execute(@"
+			_context = Bakery.Sql();
+		}
+
+		public bool DeleteOrder(int orderid) =>
+			_context.Execute(@"
                     DELETE FROM Images
                     WHERE
                         OrderId = @orderid
                 ", new
-				{
-					orderid
-				}) != 0;
-			}
-		}
-
-		public IOrder GetOrder(int orderid)
-		{
-			using (var context = Bakery.Sql())
 			{
-				return context.Query<Order>(@"
+				orderid
+			}) != 0;
+
+		public IOrder GetOrder(int orderid) =>
+			_context.Query<Order>(@"
                     SELECT
                         OrderId
                         ,CustomerId
@@ -41,17 +41,12 @@ namespace Techbart.DB.Repositories
                     WHERE
                         OrderId = @orderid
                 ", new
-				{
-					orderid
-				}).FirstOrDefault();
-			}
-		}
-
-		public FullOrder GetFullOrder(int orderid)
-		{
-			using (var context = Bakery.Sql())
 			{
-				return context.Query<FullOrder, Product, Customer, FullOrder>(@"
+				orderid
+			}).FirstOrDefault();
+
+		public FullOrder GetFullOrder(int orderid) =>
+			_context.Query<FullOrder, Product, Customer, FullOrder>(@"
                     SELECT
                         o.OrderId
                         ,o.OrderWeight
@@ -95,14 +90,9 @@ namespace Techbart.DB.Repositories
 					orderid
 				}, splitOn: "ProductId, CustomerId"
 				).FirstOrDefault();
-			}
-		}
 
-		public IList<Order> GetOrders()
-		{
-			using (var context = Bakery.Sql())
-			{
-				return context.Query<Order>(@"
+		public IList<Order> GetOrders() =>
+			_context.Query<Order>(@"
                     SELECT
                         OrderId
                         ,CustomerId
@@ -112,8 +102,6 @@ namespace Techbart.DB.Repositories
                         ,CreatedDate
                     FROM
                         Orders").ToList();
-			}
-		}
 
 		public bool InsertOrder(IOrder order)
 		{
@@ -126,30 +114,24 @@ namespace Techbart.DB.Repositories
 				order.OrderId++;
 			}
 
-			using (var context = Bakery.Sql())
-			{
-				return context.Execute(@"
+			return _context.Execute(@"
                     INSERT
                         Orders(OrderId, ProductId, CustomerId, OrderWeight, OrderDate, CreatedDate, OrderTypeId)
                     VALUES (@orderid, @productid, @customerid, @orderweight, @orderdate, @createdDate, @ordertypeid)
                 ", new
-				{
-					orderid = order.OrderId,
-					productid = order.ProductId,
-					customerid = order.CustomerId,
-					orderweight = order.OrderWeight,
-					orderdate = order.OrderDate,
-					createdDate = order.CreatedDate,
-					ordertypeid = order.OrderType
-				}) != 0;
-			}
+			{
+				orderid = order.OrderId,
+				productid = order.ProductId,
+				customerid = order.CustomerId,
+				orderweight = order.OrderWeight,
+				orderdate = order.OrderDate,
+				createdDate = order.CreatedDate,
+				ordertypeid = order.OrderType
+			}) != 0;
 		}
 
-		public bool UpdateOrder(IOrder updateOrder)
-		{
-			using (var context = Bakery.Sql())
-			{
-				return context.Execute(@"
+		public bool UpdateOrder(IOrder updateOrder) =>
+			_context.Execute(@"
                     UPDATE
                         Orders
                     SET
@@ -161,20 +143,18 @@ namespace Techbart.DB.Repositories
                     WHERE
                         OrderId = @orderid
                 ", new
-				{
-					orderid = updateOrder.OrderId,
-					customerid = updateOrder.ProductId,
-					productid = updateOrder.ProductId,
-					orderweight = updateOrder.OrderWeight,
-					orderdate = updateOrder.OrderDate,
-					createddate = updateOrder.CreatedDate
-				}) != 0;
-			}
-		}
+			{
+				orderid = updateOrder.OrderId,
+				customerid = updateOrder.ProductId,
+				productid = updateOrder.ProductId,
+				orderweight = updateOrder.OrderWeight,
+				orderdate = updateOrder.OrderDate,
+				createddate = updateOrder.CreatedDate
+			}) != 0;
 
 		private int GetIdForNextOrder()
 		{
-			var orderID = GetCountRows();
+			var orderID = Count();
 
 			while (IsExists(orderID))
 			{
@@ -183,22 +163,17 @@ namespace Techbart.DB.Repositories
 			return orderID;
 		}
 
-		public bool IsExists(int orderid)
-		{
-			using (var context = Bakery.Sql())
-			{
-				return context.ExecuteScalar<int>(@"
+		public bool IsExists(int orderid) =>
+			_context.ExecuteScalar<int>(@"
                 SELECT COUNT(OrderId)
                 FROM
                     Orders
                 WHERE
                     OrderId = @orderid
                 ", new
-				{
-					orderid
-				}) != 0;
-			}
-		}
+			{
+				orderid
+			}) != 0;
 
 		private string CreateQuery(IOrder order)
 		{
@@ -268,19 +243,14 @@ namespace Techbart.DB.Repositories
 			return query.ToString();
 		}
 
-		public IList<Order> GetOrders(int from, int to, IOrder searchOrder)
+		public IList<Order> GetOrders(SearchOrderModel searchOrder)
 		{
-			var query = string.Empty;
-			if (searchOrder != null)
+			if (!searchOrder.Validate())
 			{
-				query = CreateQuery(searchOrder);
+				throw new ArgumentException("SearchOrderModel didn't pass validation");
 			}
 
-			to = to - from;
-
-			using (var context = Bakery.Sql())
-			{
-				return context.Query<Order>($@"
+			return _context.Query<Order>($@"
                     SELECT
                         OrderId
                         ,CustomerId
@@ -290,19 +260,18 @@ namespace Techbart.DB.Repositories
                         ,CreatedDate
                     FROM
                         Orders
-                    {query}
-                    ORDER BY SupplementId DESC
-                    OFFSET @from ROWS
-                    FETCH NEXT @to ROWS ONLY
-                    ", new
-				{
-					from,
-					to
-				}).ToList();
-			}
+                     {CreateQuery(searchOrder)}
+                   ORDER BY {searchOrder.OrderBy}{(searchOrder.IsDesc ? " DESC" : string.Empty)}
+                    OFFSET @skip ROWS
+                    FETCH NEXT @take ROWS ONLY
+                ", new
+			{
+				skip = searchOrder.Skip,
+				take = searchOrder.Take
+			}).ToList();
 		}
 
-		public int GetCountRows(IOrder searchOrder)
+		public int Count(IOrder searchOrder)
 		{
 			string query = string.Empty;
 
@@ -310,25 +279,22 @@ namespace Techbart.DB.Repositories
 			{
 				query = CreateQuery(searchOrder);
 			}
-			using (var context = Bakery.Sql())
-			{
-				return context.ExecuteScalar<int>(@"
+			return _context.ExecuteScalar<int>(@"
                     SELECT COUNT(OrderId)       
                     FROM 
                         Orders
                     " + query);
-			}
 		}
 
-		public int GetCountRows()
-		{
-			using (var context = Bakery.Sql())
-			{
-				return context.ExecuteScalar<int>(@"
+		public int Count() =>
+			_context.ExecuteScalar<int>(@"
                     SELECT COUNT(OrderId)       
                     FROM 
                         Orders");
-			}
+
+		public void Dispose()
+		{
+			_context.Dispose();
 		}
 	}
 }

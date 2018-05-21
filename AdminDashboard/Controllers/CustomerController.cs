@@ -24,6 +24,7 @@ namespace AdminDashboard.Controllers
 			if (disposing)
 			{
 				_customerRepository.Dispose();
+				_roleTypeRepository.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -38,9 +39,7 @@ namespace AdminDashboard.Controllers
 
         public ActionResult PagesData(SearchCustomerModel searchCustomer)
         {
-            var customers = _customerRepository.GetCustomers(searchCustomer);
-
-            return PartialView("CustomersData", customers);
+            return PartialView("CustomersData", _customerRepository.GetCustomers(searchCustomer));
         }
 
 		public ActionResult ShowPager(SearchCustomerModel searchCustomer)

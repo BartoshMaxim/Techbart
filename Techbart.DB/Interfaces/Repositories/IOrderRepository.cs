@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Techbart.DB.Interfaces
 {
-    public interface IOrderRepository
-    {
+	public interface IOrderRepository : IDisposable
+	{
         IList<Order> GetOrders();
 
-        IList<Order> GetOrders(int from, int to, IOrder searchOrder);
+        IList<Order> GetOrders(SearchOrderModel searchOrder);
 
         IOrder GetOrder(int orderid);
 
@@ -22,8 +19,8 @@ namespace Techbart.DB.Interfaces
 
         bool UpdateOrder(IOrder updateOrder);
 
-        int GetCountRows(IOrder searchOrder);
+        int Count(IOrder searchOrder);
 
-        int GetCountRows();
+        int Count();
     }
 }

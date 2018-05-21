@@ -23,45 +23,36 @@ namespace AdminDashboard.Controllers
             _productImageRepository = productImageRepository;
         }
 
-        public ActionResult Index()
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_imageRepository.Dispose();
+				_productRepository.Dispose();
+				_productImageRepository.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
+		public ActionResult Index()
         {
-            return View();
+            return View(new SearchProductModel());
         }
 
         public ActionResult PagesData(SearchProductModel searchProduct)
         {
-            var customersCount = 0;
-            if (searchProduct.Validate())
-            {
-                customersCount = _productRepository.GetCountRows(searchProduct);
-            }
-            else
-            {
-                customersCount = _productRepository.GetCountRows();
-            }
-
-            if (customersCount == 0)
-            {
-                return PartialView("ProductsData", null);
-            }
-
-            var valideteRowsPage = new ValidateRowsPage(searchProduct, customersCount);
-
-            ViewBag.PagesCount = valideteRowsPage.ValidateGetPageCount();
-
-            var from = (searchProduct.Page - 1) * searchProduct.Rows;
-
-            var to = searchProduct.Page * searchProduct.Rows;
-
-            ViewBag.SearchProductModel = searchProduct;
-
-            //Get limit customers from database
-            var customers = _productRepository.GetProducts(from, to, searchProduct);
-
-            return PartialView("ProductsData", customers);
+            return PartialView("ProductsData", _productRepository.GetProducts(searchProduct));
         }
 
-        public ActionResult Details(int id)
+		public ActionResult ShowPager(SearchProductModel searchProduct)
+		{
+			searchProduct.Count = _productRepository.Count(searchProduct);
+
+			return PartialView("_Pager", searchProduct);
+		}
+
+		public ActionResult Details(int id)
         {
             var product = _productRepository.GetProduct(id);
 

@@ -1,14 +1,7 @@
-﻿@model IEnumerable<Techbart.DB.Order>
+﻿@model Techbart.DB.SearchOrderModel
 
 @{
     ViewBag.Title = "Index";
-    var rowsCount = 10;
-
-    var options = new AjaxOptions()
-    {
-        UpdateTargetId = "pagesdata",
-        Url = Url.Action("PagesData")
-    };
 }
 
 <h2>Index</h2>
@@ -21,23 +14,23 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.OrderId)
+                @Html.LabelFor(model => model.OrderId, new { name = "OrderId", @class = "active desc" })
                 <input class="form-control text-box single-line findid-box search" data-val="true" name="OrderId" type="number">
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductId)
+                @Html.LabelFor(model => model.ProductId, new { name = "ProductId" })
                 <input class="form-control text-box single-line findid-box search" data-val="true" name="ProductId" type="number">
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CustomerId)
+                @Html.LabelFor(model => model.CustomerId, new { name = "CustomerId" })
                 <input class="form-control text-box single-line findid-box search" data-val="true" name="CustomerId" type="number">
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDate)
+                @Html.LabelFor(model => model.OrderDate, new { name = "OrderDate" })
                 <input class="form-control text-box single-line search" data-val="true" name="OrderDate" type="date">
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderType)
+                @Html.LabelFor(model => model.OrderType, new { name = "OrderType" })
 
                 <select class="form-control text-box single-line search">
                     @foreach (var orderval in Enum.GetValues(typeof(Techbart.DB.OrderType)))
@@ -62,7 +55,7 @@
         </tr>
     </thead>
     <tbody id="pagesdata">
-        @Html.Action("PagesData", new { rows = rowsCount, page = 1, OrderType = -1 })
+        @Html.Action("PagesData", Model)
     </tbody>
 </table>
 @section scripts{

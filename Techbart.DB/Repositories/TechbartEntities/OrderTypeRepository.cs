@@ -2,16 +2,21 @@
 using Dapper;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data;
 
 namespace Techbart.DB.Repositories
 {
 	public class OrderTypeRepository : IOrderTypeRepository
-    {
-        public IList<Order> GetOrders(int ordertypeid)
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.Query<Order>(@"
+	{
+		private readonly IDbConnection _context;
+
+		public OrderTypeRepository()
+		{
+			_context = Bakery.Sql();
+		}
+
+		public IList<Order> GetOrders(int ordertypeid) =>
+			_context.Query<Order>(@"
                     SELECT
                         OrderId,
                         ProductId,
@@ -25,23 +30,21 @@ namespace Techbart.DB.Repositories
                     WHERE
                         OrderTypeId = @ordertypeid
                 ", new
-                {
-                    ordertypeid
-                }).ToList();
-            }
-        }
+			{
+				ordertypeid
+			}).ToList();
 
-        public IList<OrderType> GetOrderTypes()
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.Query<OrderType>(@"
+		public IList<OrderType> GetOrderTypes() =>
+			_context.Query<OrderType>(@"
                     SELECT
                         OrderTypeId
                     FROM
                         OrderTypes
                 ").ToList();
-            }
-        }
-    }
+
+		public void Dispose()
+		{
+			_context.Dispose();
+		}
+	}
 }

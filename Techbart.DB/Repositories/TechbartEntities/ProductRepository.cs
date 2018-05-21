@@ -4,31 +4,31 @@ using System.Collections.Generic;
 using Dapper;
 using System.Linq;
 using System.Text;
+using System.Data;
 
 namespace Techbart.DB.Repositories
 {
 	public class ProductRepository : IProductRepository
 	{
-		public bool DeleteProduct(int productid)
+		private readonly IDbConnection _context;
+
+		public ProductRepository()
 		{
-			using (var context = Bakery.Sql())
-			{
-				return context.Execute(@"
+			_context = Bakery.Sql();
+		}
+
+		public bool DeleteProduct(int productid) =>
+			_context.Execute(@"
                     DELETE FROM Products
                     WHERE
                         ProductId = @productid
                 ", new
-				{
-					productid
-				}) != 0;
-			}
-		}
-
-		public IProduct GetProduct(int productid)
-		{
-			using (var context = Bakery.Sql())
 			{
-				return context.Query<Product>(@"
+				productid
+			}) != 0;
+
+		public IProduct GetProduct(int productid) =>
+			_context.Query<Product>(@"
                     SELECT
                         ProductId
                         ,ProductName
@@ -41,17 +41,12 @@ namespace Techbart.DB.Repositories
                     WHERE
                         ProductId = @productid
                 ", new
-				{
-					productid
-				}).FirstOrDefault();
-			}
-		}
-
-		public IList<Product> GetProducts()
-		{
-			using (var context = Bakery.Sql())
 			{
-				return context.Query<Product>(@"
+				productid
+			}).FirstOrDefault();
+
+		public IList<Product> GetProducts() =>
+			_context.Query<Product>(@"
                     SELECT
                         ProductId
                         ,ProductName
@@ -61,8 +56,6 @@ namespace Techbart.DB.Repositories
                         ,AddedDate
                     FROM
                         Products").ToList();
-			}
-		}
 
 		public int InsertProduct(IProduct product)
 		{
@@ -74,30 +67,25 @@ namespace Techbart.DB.Repositories
 				product.ProductId++;
 			}
 
-			using (var context = Bakery.Sql())
-			{
-				return context.Execute(@"
+			return _context.Execute(@"
                     INSERT
                         Products (ProductId, ProductName, ProductDescription, ProductPrice, ImageId, AddedDate)
                     VALUES
                         (@productid, @productname, @productdescription, @productprice, @imageid, @addeddate)
                 ", new
-				{
-					productid = product.ProductId,
-					productname = product.ProductName,
-					productdescription = product.ProductDescription,
-					productprice = product.ProductPrice,
-					imageid = product.ImageId,
-					addeddate = product.AddedDate
-				}) != 0 ? product.ProductId : 0;
-			}
+			{
+				productid = product.ProductId,
+				productname = product.ProductName,
+				productdescription = product.ProductDescription,
+				productprice = product.ProductPrice,
+				imageid = product.ImageId,
+				addeddate = product.AddedDate
+			}) != 0 ? product.ProductId : 0;
 		}
 
 		public bool UpdateProduct(IProduct updateProduct)
 		{
-			using (var context = Bakery.Sql())
-			{
-				return context.Execute(@"
+			return _context.Execute(@"
                     UPDATE 
                         Products
                     SET
@@ -109,15 +97,14 @@ namespace Techbart.DB.Repositories
                     WHERE
                         ProductId = @productid
                 ", new
-				{
-					productid = updateProduct.ProductId,
-					productname = updateProduct.ProductName,
-					productdescription = updateProduct.ProductDescription,
-					productprice = updateProduct.ProductPrice,
-					imageid = updateProduct.ImageId,
-					addeddate = updateProduct.AddedDate
-				}) != 0;
-			}
+			{
+				productid = updateProduct.ProductId,
+				productname = updateProduct.ProductName,
+				productdescription = updateProduct.ProductDescription,
+				productprice = updateProduct.ProductPrice,
+				imageid = updateProduct.ImageId,
+				addeddate = updateProduct.AddedDate
+			}) != 0;
 		}
 
 		private string CreateQuery(IBaseProduct product)
@@ -160,19 +147,14 @@ namespace Techbart.DB.Repositories
 			return query.ToString();
 		}
 
-		public IList<Product> GetProducts(int from, int to, IBaseProduct searchProduct)
+		public IList<Product> GetProducts(SearchProductModel searchProduct)
 		{
-			var query = string.Empty;
-			if (searchProduct != null)
+			if (!searchProduct.Validate())
 			{
-				query = CreateQuery(searchProduct);
+				throw new ArgumentException("SearchProductModel didn't pass validation");
 			}
 
-			to = to - from;
-
-			using (var context = Bakery.Sql())
-			{
-				return context.Query<Product>($@"
+			return _context.Query<Product>($@"
                    SELECT
                         ProductId
                         ,ProductName
@@ -182,20 +164,19 @@ namespace Techbart.DB.Repositories
                         ,AddedDate
                     FROM
                         Products
-                    {query}
-                    ORDER BY ProductId DESC
-                    OFFSET @from ROWS
-                    FETCH NEXT @to ROWS ONLY
+                    {CreateQuery(searchProduct)}
+                   ORDER BY {searchProduct.OrderBy}{(searchProduct.IsDesc ? " DESC" : string.Empty)}
+                    OFFSET @skip ROWS
+                    FETCH NEXT @take ROWS ONLY
                 ", new
-				{
-					from,
-					to
-				}
-				).ToList();
+			{
+				skip = searchProduct.Skip,
+				take = searchProduct.Take
 			}
+				).ToList();
 		}
 
-		public int GetCountRows(IBaseProduct searchProduct)
+		public int Count(IBaseProduct searchProduct)
 		{
 			string query = string.Empty;
 
@@ -204,30 +185,22 @@ namespace Techbart.DB.Repositories
 				query = CreateQuery(searchProduct);
 			}
 
-			using (var context = Bakery.Sql())
-			{
-				return context.ExecuteScalar<int>(@"
+			return _context.ExecuteScalar<int>(@"
                     SELECT COUNT(ProductId)       
                     FROM 
                         Products
                     " + query);
-			}
 		}
 
-		public int GetCountRows()
-		{
-			using (var context = Bakery.Sql())
-			{
-				return context.ExecuteScalar<int>(@"
+		public int Count() =>
+			_context.ExecuteScalar<int>(@"
                     SELECT COUNT(ProductId)       
                     FROM 
                         Products");
-			}
-		}
 
 		private int GetIdForNextProduct()
 		{
-			var productID = GetCountRows();
+			var productID = Count();
 
 			while (IsExists(productID))
 			{
@@ -236,21 +209,21 @@ namespace Techbart.DB.Repositories
 			return productID;
 		}
 
-		public bool IsExists(int productid)
-		{
-			using (var context = Bakery.Sql())
-			{
-				return context.ExecuteScalar<int>(@"
+		public bool IsExists(int productid) =>
+			_context.ExecuteScalar<int>(@"
                 SELECT COUNT(ProductId)
                 FROM
                     Products
                 WHERE
                     ProductId = @productid
                 ", new
-				{
-					productid
-				}) != 0;
-			}
+			{
+				productid
+			}) != 0;
+
+		public void Dispose()
+		{
+			_context.Dispose();
 		}
 	}
 }

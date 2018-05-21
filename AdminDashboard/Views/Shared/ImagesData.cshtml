@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<Techbart.DB.Image>
 
-@{
-    var searchImage = (Techbart.DB.SearchImageModel)ViewBag.SearchImageModel;
-}
-
 @if (Model != null)
 {
     foreach (var item in Model)
@@ -25,47 +21,6 @@
             </td>
         </tr>
     }
-    <tr>
-        <td colspan="5">
-            <ul class="pages">
-                @for (int i = 1; i <= ViewBag.PagesCount; i++)
-                {
-
-                    <li>
-                        @if (searchImage.Page == i)
-                        {
-                            @Ajax.ActionLink(i.ToString(), "PagesData", new
-                       {
-                           page = i,
-                           rows = searchImage.Rows,
-                           CustomerId = searchImage.ImageId,
-                           FirstName = searchImage.ImageName,
-                           LastName = searchImage.ImagePath,
-                       }, new AjaxOptions
-                       {
-                           UpdateTargetId = "pagesdata"
-                       }, new { @class = "active" })
-                        }
-                        else
-                        {
-                            @Ajax.ActionLink(i.ToString(), "PagesData", new
-                       {
-                           page = i,
-                           rows = searchImage.Rows,
-                           CustomerId = searchImage.ImageId,
-                           FirstName = searchImage.ImageName,
-                           LastName = searchImage.ImagePath
-                       }, new AjaxOptions
-                       {
-                           UpdateTargetId = "pagesdata"
-                       })
-                        }
-
-                    </li>
-                }
-            </ul>
-        </td>
-    </tr>
 }
 else
 {

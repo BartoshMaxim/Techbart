@@ -1,18 +1,22 @@
-﻿using Techbart.DB.Interfaces;
-using System;
+﻿using Dapper;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using Dapper;
+using Techbart.DB.Interfaces;
 
 namespace Techbart.DB.Repositories
 {
-    public class RoleTypeRepository : IRoleTypeRepository
-    {
-        public IList<Customer> GetCustomers(int roletypeid)
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.Query<Customer>(@"
+	public class RoleTypeRepository : IRoleTypeRepository
+	{
+		private readonly IDbConnection _context;
+
+		public RoleTypeRepository()
+		{
+			_context = Bakery.Sql();
+		}
+
+		public IList<Customer> GetCustomers(int roletypeid) =>
+		_context.Query<Customer>(@"
                     SELECT
                         CustomerId
                         ,FirstName
@@ -32,36 +36,29 @@ namespace Techbart.DB.Repositories
                     WHERE
                         CustomerRoleId = @roletypeid
                 ", new
-                {
-                    roletypeid = roletypeid
-                }).ToList();
-            }
-        }
+		{
+			roletypeid
+		}).ToList();
 
-        public IList<RoleType> GetRoleTypes()
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.Query<RoleType>(@"
+		public IList<RoleType> GetRoleTypes() =>
+			_context.Query<RoleType>(@"
                     SELECT
                         CustomerRoleId
                     FROM
                         CustomerRoles
                 ").ToList();
-            }
-        }
 
-        public IList<string> GetRolesDescriptions()
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.Query<string>(@"
+		public IList<string> GetRolesDescriptions() =>
+				_context.Query<string>(@"
                     SELECT
                         RoleName
                     FROM
                         CustomerRoles
                 ").ToList();
-            }
-        }
-    }
+
+		public void Dispose()
+		{
+			_context.Dispose();
+		}
+	}
 }

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Techbart.DB.Interfaces
 {
-    public interface IOrderSupplementRepository
+	public interface IOrderSupplementRepository : IDisposable
     {
         IList<Supplement> GetSupplements(int orderid);
 

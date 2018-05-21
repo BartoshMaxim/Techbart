@@ -2,49 +2,44 @@
 using System.Linq;
 using System.Collections.Generic;
 using Dapper;
+using System.Data;
 
 namespace Techbart.DB.Repositories
 {
-    public class ProductImageRepository : IProductImageRepository
-    {
-        public bool DeleteProductImageReference(IProductImage productImage)
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.Execute(@"
+	public class ProductImageRepository : IProductImageRepository
+	{
+		private readonly IDbConnection _context;
+
+		public ProductImageRepository()
+		{
+			_context = Bakery.Sql();
+		}
+
+		public bool DeleteProductImageReference(IProductImage productImage) =>
+				_context.Execute(@"
                     DELETE FROM ProductsImages
                     WHERE
                         ProductId   = @productid
                     AND
                         ImageId		= @imageid
                 ", new
-                {
-                    productid = productImage.ProductId,
-                    imageid = productImage.ImageId
-                }) != 0;
-            }
-        }
+				{
+					productid = productImage.ProductId,
+					imageid = productImage.ImageId
+				}) != 0;
 
-        public bool DeleteProductImageReference(int productImageId)
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.Execute(@"
+		public bool DeleteProductImageReference(int productImageId) =>
+				_context.Execute(@"
                     DELETE FROM ProductsImages
                     WHERE
                         ProductImageId = @productImageId
                 ", new
-                {
-                    productImageId
-                }) != 0;
-            }
-        }
+				{
+					productImageId
+				}) != 0;
 
-        public int GetProductImageId(IProductImage productImage)
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.ExecuteScalar<int>(@"
+		public int GetProductImageId(IProductImage productImage) =>
+				_context.ExecuteScalar<int>(@"
                     SELECT
                         ProductImageId
                     FROM
@@ -54,18 +49,13 @@ namespace Techbart.DB.Repositories
                     AND
                         ImageId		= @imageid
                 ", new
-                {
-                    productid = productImage.ProductId,
-                    imageid = productImage.ImageId
-                });
-            }
-        }
+			{
+				productid = productImage.ProductId,
+				imageid = productImage.ImageId
+			});
 
-        public IList<Image> GetImages(int productid)
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.Query<Image>(@"
+		public IList<Image> GetImages(int productid) =>
+				_context.Query<Image>(@"
                     SELECT
                         i.ImageId
                         ,i.ImageName
@@ -77,88 +67,69 @@ namespace Techbart.DB.Repositories
                             ON pi.ImageId = i.ImageId
                             AND pi.ProductId = @productid
                         ", new
-                {
-                    productid
-                }).ToList();
-            }
-        }
+				{
+					productid
+				}).ToList();
 
-        public bool InsertProductImageReference(IProductImage productImage)
-        {
-            if (!IsExists(productImage))
-            {
-                productImage.ProductImageId = GetIdForNextProductImage();
+		public bool InsertProductImageReference(IProductImage productImage)
+		{
+			if (!IsExists(productImage))
+			{
+				productImage.ProductImageId = GetIdForNextProductImage();
 
-                if (productImage.ProductImageId == 0)
-                {
-                    productImage.ProductImageId++;
-                }
-
-                using (var context = Bakery.Sql())
-                {
-                    return context.Execute(@"
+				if (productImage.ProductImageId == 0)
+				{
+					productImage.ProductImageId++;
+				}
+				return _context.Execute(@"
                     INSERT
                         ProductsImages (ProductImageId, ProductId, ImageId)
                     VALUES
                         (@productimageid, @productid, @imageid)
                     ", new
-                    {
-                        productimageid = productImage.ProductImageId,
-                        productid = productImage.ProductId,
-                        imageid = productImage.ImageId
-                    }) != 0;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
+				{
+					productimageid = productImage.ProductImageId,
+					productid = productImage.ProductId,
+					imageid = productImage.ImageId
+				}) != 0;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
-        public int GetCountRows()
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.ExecuteScalar<int>(@"
+		public int GetCountRows() =>
+			_context.ExecuteScalar<int>(@"
                     SELECT COUNT(ProductImageId)       
                     FROM 
                         ProductsImages");
-            }
-        }
 
-        private int GetIdForNextProductImage()
-        {
-            var productImageID = GetCountRows();
+		private int GetIdForNextProductImage()
+		{
+			var productImageID = GetCountRows();
 
-            while (IsExists(productImageID))
-            {
-                productImageID++;
-            }
-            return productImageID;
-        }
+			while (IsExists(productImageID))
+			{
+				productImageID++;
+			}
+			return productImageID;
+		}
 
-        public bool IsExists(int productimageid)
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.ExecuteScalar<int>(@"
+		public bool IsExists(int productimageid) =>
+			_context.ExecuteScalar<int>(@"
                 SELECT COUNT(ProductImageId)
                 FROM
                     ProductsImages
                 WHERE
                     ProductImageId = @productimageid
                 ", new
-                {
-                    productimageid
-                }) != 0;
-            }
-        }
+			{
+				productimageid
+			}) != 0;
 
-        public bool IsExists(IProductImage productImage)
-        {
-            using (var context = Bakery.Sql())
-            {
-                return context.ExecuteScalar<int>(@"
+		public bool IsExists(IProductImage productImage) =>
+			_context.ExecuteScalar<int>(@"
                 SELECT COUNT(ProductImageId)
                 FROM
                     ProductsImages
@@ -167,11 +138,14 @@ namespace Techbart.DB.Repositories
                 AND
                     ImageId = @imageid
                 ", new
-                {
-                    productid = productImage.ProductId,
-                    imageid = productImage.ImageId
-                }) != 0;
-            }
-        }
-    }
+			{
+				productid = productImage.ProductId,
+				imageid = productImage.ImageId
+			}) != 0;
+
+		public void Dispose()
+		{
+			_context.Dispose();
+		}
+	}
 }

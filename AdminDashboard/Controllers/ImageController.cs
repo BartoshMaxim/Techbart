@@ -1,5 +1,4 @@
 ﻿using AdminDashboard.Core.ControllersLogic;
-using AdminDashboard.Core.Helpers;
 using System.Web.Mvc;
 using Techbart.DB;
 using Techbart.DB.Interfaces;
@@ -15,52 +14,36 @@ namespace AdminDashboard.Controllers
             _imageRepository = imageRepository;
         }
 
-        // GET: Image
-        public ActionResult Index()
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_imageRepository.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
+		// GET: Image
+		public ActionResult Index()
         {
-            return View();
+			return View(new SearchImageModel());
         }
 
         public ActionResult PagesData(SearchImageModel searchImage)
         {
-            var customersCount = 0;
-            if (searchImage.Validate())
-            {
-                customersCount = _imageRepository.GetCountRows(searchImage);
-            }
-            else
-            {
-                customersCount = _imageRepository.GetCountRows();
-            }
-
-            if (customersCount == 0)
-            {
-                return PartialView("ImagesData", null);
-            }
-
-            var valideteRowsPage = new ValidateRowsPage(searchImage, customersCount);
-
-            ViewBag.PagesCount = valideteRowsPage.ValidateGetPageCount();
-
-            var from = (searchImage.Page - 1) * searchImage.Rows;
-
-            var to = searchImage.Page * searchImage.Rows;
-
-            ViewBag.SearchImageModel = searchImage;
-
-            //Get limit customers from database
-            var customers = _imageRepository.GetImages(searchImage);
-
-            if (Request.UrlReferrer != null && Request.UrlReferrer.AbsolutePath.Equals("/Product/Create"))
-            {
-                return PartialView("ExistsImagesData", customers);
-            }
-
-            return PartialView("ImagesData", customers);
+			return PartialView("ImagesData", _imageRepository.GetImages(searchImage));
         }
 
-        // GET: Image/Details/5
-        public ActionResult Details(int id)
+		public ActionResult ShowPager(SearchImageModel searchImage)
+		{
+			searchImage.Count = _imageRepository.Count(searchImage);
+
+			return PartialView("_Pager", searchImage);
+		}
+
+		// GET: Image/Details/5
+		public ActionResult Details(int id)
         {
             var image = _imageRepository.GetImage(id);
 

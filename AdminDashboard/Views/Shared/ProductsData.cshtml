@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<Techbart.DB.Product>
 
-@{
-    var searchProduct = (Techbart.DB.SearchProductModel)ViewBag.SearchProductModel;
-}
-
 @if (Model != null)
 {
     foreach (var item in Model)
@@ -25,46 +21,6 @@
             </td>
         </tr>
     }
-    <tr>
-        <td colspan="5">
-            <ul class="pages">
-                @for (int i = 1; i <= ViewBag.PagesCount; i++)
-                {
-
-                    <li>
-                        @if (searchProduct.Page == i)
-                        {
-                            @Ajax.ActionLink(i.ToString(), "PagesData", new
-                       {
-                           page = i,
-                           rows = searchProduct.Rows,
-                           CustomerId = searchProduct.ProductId,
-                           FirstName = searchProduct.ProductName,
-                           LastName = searchProduct.ProductPrice,
-                       }, new AjaxOptions
-                       {
-                           UpdateTargetId = "pagesdata"
-                       }, new { @class = "active" })
-                        }
-                        else
-                        {
-                            @Ajax.ActionLink(i.ToString(), "PagesData", new
-					   {
-						   page = i,
-						   rows = searchProduct.Rows,
-						   CustomerId = searchProduct.ProductId,
-						   FirstName = searchProduct.ProductName,
-						   LastName = searchProduct.ProductPrice
-					   }, new AjaxOptions
-					   {
-						   UpdateTargetId = "pagesdata"
-					   })
-                        }
-                    </li>
-                }
-            </ul>
-        </td>
-    </tr>
 }
 else
 {

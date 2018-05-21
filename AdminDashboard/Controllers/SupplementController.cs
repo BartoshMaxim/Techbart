@@ -1,7 +1,6 @@
-﻿using AdminDashboard.Core.Helpers;
+﻿using System.Web.Mvc;
 using Techbart.DB;
 using Techbart.DB.Interfaces;
-using System.Web.Mvc;
 
 namespace AdminDashboard.Controllers
 {
@@ -17,44 +16,23 @@ namespace AdminDashboard.Controllers
         // GET: Supplement
         public ActionResult Index()
         {
-            return View();
+            return View(new SearchSupplementModel());
         }
 
         public ActionResult PagesData(SearchSupplementModel searchSupplement)
         {
-            var supplementCount = 0;
-            if (searchSupplement.Validate())
-            {
-                supplementCount = _supplementRepository.GetCountRows(searchSupplement);
-            }
-            else
-            {
-                supplementCount = _supplementRepository.GetCountRows();
-            }
-
-            if (supplementCount == 0)
-            {
-                return PartialView("SupplementsData", null);
-            }
-
-            var valideteRowsPage = new ValidateRowsPage(searchSupplement, supplementCount);
-
-            ViewBag.PagesCount = valideteRowsPage.ValidateGetPageCount();
-
-            var from = (searchSupplement.Page - 1) * searchSupplement.Rows;
-
-            var to = searchSupplement.Page * searchSupplement.Rows;
-
-            ViewBag.SearchSupplementModel = searchSupplement;
-
-            //Get limit supplements from database
-            var supplements = _supplementRepository.GetSupplements(from, to, searchSupplement);
-
-            return PartialView("SupplementsData", supplements);
+            return PartialView("SupplementsData", _supplementRepository.GetSupplements(searchSupplement));
         }
 
-        // GET: Supplement/Details/5
-        public ActionResult Details(int id)
+		public ActionResult ShowPager(SearchSupplementModel searchSupplement)
+		{
+			searchSupplement.Count = _supplementRepository.Count(searchSupplement);
+
+			return PartialView("_Pager", searchSupplement);
+		}
+
+		// GET: Supplement/Details/5
+		public ActionResult Details(int id)
         {
             var supplement = _supplementRepository.GetSupplement(id);
 

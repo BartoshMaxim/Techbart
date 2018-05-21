@@ -1,84 +1,84 @@
 ﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+	padding-top: 50px;
+	padding-bottom: 20px;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
 input,
 select,
 textarea {
-    max-width: 280px;
+	max-width: 280px;
 }
 
 div.error {
-    border: 1px solid #f00;
-    padding: 5px;
-    margin: 20px;
-    background-color: #ffe3e0;
+	border: 1px solid #f00;
+	padding: 5px;
+	margin: 20px;
+	background-color: #ffe3e0;
 }
 
 .edit-customerid {
-    padding: 7px;
+	padding: 7px;
 }
 
 th input.findid-box {
-    max-width: 100px;
+	max-width: 100px;
 }
 
 th.findid-box {
-    max-width: 100px;
+	max-width: 100px;
 }
 
 input.file.upload-image {
-    opacity: 0;
-    position: absolute;
-    z-index: -1;
+	opacity: 0;
+	position: absolute;
+	z-index: -1;
 }
 
 label.upload-image {
-    cursor: pointer;
-    border: 1px solid black;
-    font-weight: bold;
+	cursor: pointer;
+	border: 1px solid black;
+	font-weight: bold;
 }
 
 img.upload-image-img {
-    max-height: 500px;
-    max-width: 500px;
-    margin-bottom: 30px;
+	max-height: 500px;
+	max-width: 500px;
+	margin-bottom: 30px;
 }
 
-.details.product-photo{
-    max-height: 200px;
-    max-width: 300px;
-    margin-bottom:10px;
+.details.product-photo {
+	max-height: 200px;
+	max-width: 300px;
+	margin-bottom: 10px;
 }
 
 dt.product-photo {
-    margin-top: 20px;
-    margin-bottom: 10px;
+	margin-top: 20px;
+	margin-bottom: 10px;
 }
 
 ul.pages {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
 }
 
-    ul.pages li {
-        float: left;
-        margin-left: 5px;
-        margin-bottom: 5px;
-        height: 42px;
-        width: 42px;
-        text-align: center;
-    }
+	ul.pages li {
+		float: left;
+		margin-left: 5px;
+		margin-bottom: 5px;
+		height: 42px;
+		width: 42px;
+		text-align: center;
+	}
 
 		ul.pages li span {
 			display: block;
@@ -87,6 +87,7 @@ ul.pages {
 			padding: 10px 0;
 			text-decoration: none;
 			border: 1px solid gray;
+			cursor: pointer;
 		}
 
 			ul.pages li span.active {
@@ -96,3 +97,28 @@ ul.pages {
 			ul.pages li span:hover {
 				background-color: gray;
 			}
+
+tr#search label.active {
+	color: brown;
+	position: relative;
+}
+
+	tr#search label.active.desc::before {
+		background: url("../Images/AdminDashboard/bot-arrow.png");
+		content: '';
+		position: absolute;
+		width: 11px;
+		height: 6px;
+		left: -12px;
+		top: 40%;
+	}
+
+	tr#search label.active::before {
+		background: url("../Images/AdminDashboard/top-arrow.png");
+		content: '';
+		position: absolute;
+		width: 11px;
+		height: 6px;
+		left: -12px;
+		top: 7px;
+	}

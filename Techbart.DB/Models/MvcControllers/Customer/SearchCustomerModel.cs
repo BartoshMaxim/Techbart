@@ -1,8 +1,9 @@
-﻿using Techbart.DB.Interfaces;
+﻿using Bakery.DB.Models.MvcControllers;
+using Techbart.DB.Interfaces;
 
 namespace Techbart.DB
 {
-	public class SearchCustomerModel : IPage, ICustomerBase
+	public class SearchCustomerModel : SearchModel, ICustomerBase
 	{
 		public int CustomerId { get; set; }
 
@@ -12,25 +13,7 @@ namespace Techbart.DB
 
 		public string Email { get; set; }
 
-		public string OrderBy { get; set; }
-
-		public int Rows { get; set; }
-
-		public int Skip { get; set; }
-
-		public int Take { get; set; }
-
-		public int Count { get; set; }
-
-		public bool IsDesc { get; set; }
-
-		public SearchCustomerModel()
-		{
-			Skip = 0;
-			OrderBy = "CustomerId";
-			Take = 25;
-			IsDesc = true;
-		}
+		public SearchCustomerModel() : base("CustomerId") { }
 
 		public bool Validate()
 		{

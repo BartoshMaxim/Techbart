@@ -2,18 +2,12 @@
 
 @{
 	int totalItems = Model.Count;
-	int pageSize = 50;
 	int currentPage = 1;
 	int pageCount = (Model.Count / Model.Take) + ((Model.Count % Model.Take) == 0 ? 0 : 1);
 
-	if (Model.Take > 0)
-	{
-		pageSize = Model.Take;
-	}
-
 	if (Model.Skip != 0)
 	{
-		currentPage += Model.Skip / pageSize;
+		currentPage += Model.Skip / Model.Take;
 	}
 }
 @if (pageCount > 0)

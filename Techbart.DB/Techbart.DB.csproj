@@ -78,8 +78,8 @@
     <Compile Include="Interfaces\Models\ApiControllerEntities\ICustomerLoginRequest.cs" />
     <Compile Include="Interfaces\Models\IdentityEntities\ILoginModel.cs" />
     <Compile Include="Interfaces\MvcControllers\Image\IUploadImageModel.cs" />
-    <Compile Include="Interfaces\Repositories\ICakeImageRepository.cs" />
-    <Compile Include="Interfaces\Repositories\ICakeRepository.cs" />
+    <Compile Include="Interfaces\Repositories\IProductImageRepository.cs" />
+    <Compile Include="Interfaces\Repositories\IProductRepository.cs" />
     <Compile Include="Interfaces\Repositories\IOrderSupplementRepository.cs" />
     <Compile Include="Interfaces\Repositories\ICustomerRepository.cs" />
     <Compile Include="Interfaces\Repositories\IImageRepository.cs" />
@@ -92,6 +92,7 @@
     <Compile Include="Models\ApiControllerEntities\ImageControllerEntities.cs" />
     <Compile Include="Models\ApiControllerEntities\OrderControllerEntities.cs" />
     <Compile Include="Models\ApiControllerEntities\SupplementControllerEntities.cs" />
+    <Compile Include="Models\MvcControllers\SearchModel.cs" />
     <Compile Include="Models\SiteEntities\Product.cs" />
     <Compile Include="Models\SiteEntities\ProductImage.cs" />
     <Compile Include="Models\SiteEntities\OrderSupplement.cs" />
